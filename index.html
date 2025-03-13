@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mafia Game Role Assignment</title>
+    <title>Role Assignment Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -140,38 +140,89 @@
             box-shadow: 0 2px #0056b3;
             transform: translateY(2px);
         }
+        #resetButton {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        #resetButton:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
+        #resetPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 10px;
+        }
+        #resetPopup button {
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        #resetPopup button:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
     </style>
 </head>
 <body>
     <div class="role-list" id="roleList"></div>
     <button id="addRoleButton" onclick="addRole()">Add Role</button>
     <button class="start-button" onclick="startGame()">Start</button>
+    <button id="resetButton" onclick="showResetPopup()">Reset to default</button>
     <div class="circle-container" id="circleContainer"></div>
     <div class="popup" id="popup">
         <p id="popupText"></p>
         <p id="popupTeam"></p>
         <button onclick="closePopup()">Close</button>
     </div>
+    <div class="popup" id="resetPopup">
+        <p>Are you sure you want to reset the list to default?</p>
+        <button onclick="resetToDefault()">Yes</button>
+        <button onclick="closeResetPopup()">No</button>
+    </div>
     <div class="overlay" id="overlay"></div>
 
     <script>
         const rolesKey = 'roles';
+        const defaultRoles = [
+            { name: "زره ساز-پزشک", team: "city" },
+            { name: "کارآگاه", team: "city" },
+            { name: "عطار", team: "city" },
+            { name: "مظنون", team: "city" },
+            { name: "وارث", team: "city" },
+            { name: "شهروند", team: "city" },
+            { name: "شهروند", team: "city" },
+            { name: "رییس مافیا", team: "mafia" },
+            { name: "جادوگر", team: "mafia" },
+            { name: "جلاد", team: "mafia" }
+        ];
 
         function loadRoles() {
             let roles = JSON.parse(localStorage.getItem(rolesKey));
             if (!roles) {
-                roles = [
-                    { name: "زره ساز-پزشک", team: "city" },
-                    { name: "کارآگاه", team: "city" },
-                    { name: "عطار", team: "city" },
-                    { name: "مظنون", team: "city" },
-                    { name: "وارث", team: "city" },
-                    { name: "شهروند", team: "city" },
-                    { name: "شهروند", team: "city" },
-                    { name: "رییس مافیا", team: "mafia" },
-                    { name: "جادوگر", team: "mafia" },
-                    { name: "جلاد", team: "mafia" }
-                ];
+                roles = defaultRoles;
                 localStorage.setItem(rolesKey, JSON.stringify(roles));
             }
             populateRoleList(roles);
@@ -252,6 +303,7 @@
             roleList.style.display = 'none'; // Hide the role input section
             document.querySelector('.start-button').style.display = 'none'; // Hide the Start button
             document.getElementById('addRoleButton').style.display = 'none'; // Hide the Add Role button
+            document.getElementById('resetButton').style.display = 'none'; // Hide the Reset button
             const shuffledRoles = roles.sort(() => Math.random() - 0.5);
             const circleContainer = document.getElementById('circleContainer');
             circleContainer.innerHTML = '';
@@ -302,6 +354,29 @@
                 circle.dataset.flipped = 'true';
                 circle.onclick = null;
             }
+        }
+
+        function showResetPopup() {
+            const resetPopup = document.getElementById('resetPopup');
+            const overlay = document.getElementById('overlay');
+            resetPopup.style.display = 'block';
+            overlay.style.display = 'block';
+            overlay.onclick = function() {
+                closeResetPopup();
+            };
+        }
+
+        function closeResetPopup() {
+            const resetPopup = document.getElementById('resetPopup');
+            const overlay = document.getElementById('overlay');
+            resetPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function resetToDefault() {
+            localStorage.setItem(rolesKey, JSON.stringify(defaultRoles));
+            loadRoles();
+            closeResetPopup();
         }
 
         // Load roles and ensure the predefined roles are visible
@@ -442,6 +517,50 @@
         transition: all 0.2s ease;
     }
     #addRoleButton:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
+    }
+    #resetButton {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    #resetButton:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
+    }
+    #resetPopup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        border-radius: 10px;
+    }
+    #resetPopup button {
+        margin: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    #resetPopup button:active {
         box-shadow: 0 2px #0056b3;
         transform: translateY(2px);
     }
