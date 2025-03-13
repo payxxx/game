@@ -109,12 +109,36 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
+        .role-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .role-container input {
+            margin-right: 10px;
+            flex-grow: 1;
+        }
+        #addRoleButton {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        #addRoleButton:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
     </style>
 </head>
 <body>
     <div class="role-list" id="roleList"></div>
     <button id="addRoleButton" onclick="addRole()">Add Role</button>
-    <button id="removeRoleButton" onclick="removeRole()">Remove Role</button>
     <button class="start-button" onclick="startGame()">Start</button>
     <div class="circle-container" id="circleContainer"></div>
     <div class="popup" id="popup">
@@ -139,11 +163,20 @@
             const roleList = document.getElementById('roleList');
             roleList.innerHTML = '';
             roles.forEach((role, index) => {
+                const roleContainer = document.createElement('div');
+                roleContainer.className = 'role-container';
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.value = role;
                 input.placeholder = `Role ${index + 1}`;
-                roleList.appendChild(input);
+                const removeButton = document.createElement('button');
+                removeButton.innerText = 'Remove';
+                removeButton.onclick = function() {
+                    roleContainer.remove();
+                };
+                roleContainer.appendChild(input);
+                roleContainer.appendChild(removeButton);
+                roleList.appendChild(roleContainer);
             });
         }
 
@@ -153,24 +186,26 @@
 
         function addRole() {
             const roleList = document.getElementById('roleList');
+            const roleContainer = document.createElement('div');
+            roleContainer.className = 'role-container';
             const newRole = document.createElement('input');
             newRole.type = 'text';
             newRole.placeholder = `Role ${roleList.children.length + 1}`;
-            roleList.appendChild(newRole);
-        }
-
-        function removeRole() {
-            const roleList = document.getElementById('roleList');
-            if (roleList.children.length > 1) {
-                roleList.removeChild(roleList.lastChild);
-            }
+            const removeButton = document.createElement('button');
+            removeButton.innerText = 'Remove';
+            removeButton.onclick = function() {
+                roleContainer.remove();
+            };
+            roleContainer.appendChild(newRole);
+            roleContainer.appendChild(removeButton);
+            roleList.appendChild(roleContainer);
         }
 
         function startGame() {
             const roles = [];
             const roleList = document.getElementById('roleList');
             for (let i = 0; i < roleList.children.length; i++) {
-                const role = roleList.children[i].value;
+                const role = roleList.children[i].querySelector('input').value;
                 if (role) roles.push(role);
             }
             if (roles.length < 1) {
@@ -181,7 +216,6 @@
             roleList.style.display = 'none'; // Hide the role input section
             document.querySelector('.start-button').style.display = 'none'; // Hide the Start button
             document.getElementById('addRoleButton').style.display = 'none'; // Hide the Add Role button
-            document.getElementById('removeRoleButton').style.display = 'none'; // Hide the Remove Role button
             const shuffledRoles = roles.sort(() => Math.random() - 0.5);
             const circleContainer = document.getElementById('circleContainer');
             circleContainer.innerHTML = '';
@@ -340,5 +374,30 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 999;
+    }
+    .role-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .role-container input {
+        margin-right: 10px;
+        flex-grow: 1;
+    }
+    #addRoleButton {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    #addRoleButton:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
     }
 </style>
