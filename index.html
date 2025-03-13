@@ -203,6 +203,7 @@
         <button onclick="closeResetPopup()">No</button>
     </div>
     <div class="overlay" id="overlay"></div>
+    <div id="roleSummary" style="display: none; margin-top: 20px; font-size: 18px;"></div>
 
     <script>
         const rolesKey = 'roles';
@@ -304,6 +305,13 @@
             document.querySelector('.start-button').style.display = 'none'; // Hide the Start button
             document.getElementById('addRoleButton').style.display = 'none'; // Hide the Add Role button
             document.getElementById('resetButton').style.display = 'none'; // Hide the Reset button
+
+            const mafiaCount = roles.filter(role => role.team === 'mafia').length;
+            const cityCount = roles.filter(role => role.team === 'city').length;
+            const roleSummary = document.getElementById('roleSummary');
+            roleSummary.innerText = `Mafia: ${mafiaCount}, City: ${cityCount}`;
+            roleSummary.style.display = 'block';
+
             const shuffledRoles = roles.sort(() => Math.random() - 0.5);
             const circleContainer = document.getElementById('circleContainer');
             circleContainer.innerHTML = '';
