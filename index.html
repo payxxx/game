@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Assignment Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .role-list {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .role-list input {
+            display: block;
+            margin: 5px 0;
+            padding: 10px;
+            width: 200px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        .role-list button, .start-button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        .role-list button:active, .start-button:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
+        .circle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .circle {
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            border-radius: 50%;
+            background-color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        .circle:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 10px;
+        }
+        .popup button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px #0056b3;
+            transition: all 0.2s ease;
+        }
+        .popup button:active {
+            box-shadow: 0 2px #0056b3;
+            transform: translateY(2px);
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="role-list" id="roleList"></div>
+    <button id="addRoleButton" onclick="addRole()">Add Role</button>
+    <button id="removeRoleButton" onclick="removeRole()">Remove Role</button>
+    <button class="start-button" onclick="startGame()">Start</button>
+    <div class="circle-container" id="circleContainer"></div>
+    <div class="popup" id="popup">
+        <p id="popupText"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        const rolesKey = 'roles';
+
+        function loadRoles() {
+            let roles = JSON.parse(localStorage.getItem(rolesKey));
+            if (!roles) {
+                roles = ["Role 1", "Role 2", "Role 3"];
+                localStorage.setItem(rolesKey, JSON.stringify(roles));
+            }
+            populateRoleList(roles);
+        }
+
+        function populateRoleList(roles) {
+            const roleList = document.getElementById('roleList');
+            roleList.innerHTML = '';
+            roles.forEach((role, index) => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = role;
+                input.placeholder = `Role ${index + 1}`;
+                roleList.appendChild(input);
+            });
+        }
+
+        function saveRoles(roles) {
+            localStorage.setItem(rolesKey, JSON.stringify(roles));
+        }
+
+        function addRole() {
+            const roleList = document.getElementById('roleList');
+            const newRole = document.createElement('input');
+            newRole.type = 'text';
+            newRole.placeholder = `Role ${roleList.children.length + 1}`;
+            roleList.appendChild(newRole);
+        }
+
+        function removeRole() {
+            const roleList = document.getElementById('roleList');
+            if (roleList.children.length > 1) {
+                roleList.removeChild(roleList.lastChild);
+            }
+        }
+
+        function startGame() {
+            const roles = [];
+            const roleList = document.getElementById('roleList');
+            for (let i = 0; i < roleList.children.length; i++) {
+                const role = roleList.children[i].value;
+                if (role) roles.push(role);
+            }
+            if (roles.length < 1) {
+                alert('Please fill in at least one role.');
+                return;
+            }
+            saveRoles(roles);
+            roleList.style.display = 'none'; // Hide the role input section
+            document.querySelector('.start-button').style.display = 'none'; // Hide the Start button
+            document.getElementById('addRoleButton').style.display = 'none'; // Hide the Add Role button
+            document.getElementById('removeRoleButton').style.display = 'none'; // Hide the Remove Role button
+            const shuffledRoles = roles.sort(() => Math.random() - 0.5);
+            const circleContainer = document.getElementById('circleContainer');
+            circleContainer.innerHTML = '';
+            for (let i = 0; i < roles.length; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'circle';
+                circle.innerText = '?';
+                circle.dataset.role = shuffledRoles[i];
+                circle.dataset.flipped = 'false';
+                circle.onclick = function() {
+                    if (circle.dataset.flipped === 'false') {
+                        circle.innerText = 'X';
+                        circle.style.backgroundColor = 'red';
+                        circle.style.cursor = 'default';
+                        circle.dataset.flipped = 'true';
+                        circle.onclick = null;
+                        setTimeout(() => showPopup(circle.dataset.role, circle), 100);
+                    }
+                };
+                circleContainer.appendChild(circle);
+            }
+        }
+
+        function showPopup(role, circle) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const popupText = document.getElementById('popupText');
+            popupText.innerText = role;
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+            overlay.onclick = function() {
+                closePopup(circle);
+            };
+        }
+
+        function closePopup(circle) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+            if (circle) {
+                circle.innerText = 'X';
+                circle.style.backgroundColor = 'red';
+                circle.style.cursor = 'default';
+                circle.dataset.flipped = 'true';
+                circle.onclick = null;
+            }
+        }
+
+        // Load roles and ensure the predefined roles are visible
+        document.addEventListener('DOMContentLoaded', loadRoles);
+    </script>
+</body>
+</html>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+    }
+    .role-list {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .role-list input {
+        display: block;
+        margin: 5px 0;
+        padding: 10px;
+        width: 200px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+    .role-list button, .start-button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    .role-list button:active, .start-button:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
+    }
+    .circle-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .circle {
+        width: 60px;
+        height: 60px;
+        margin: 10px;
+        border-radius: 50%;
+        background-color: #007bff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    .circle:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        border-radius: 10px;
+    }
+    .popup button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px #0056b3;
+        transition: all 0.2s ease;
+    }
+    .popup button:active {
+        box-shadow: 0 2px #0056b3;
+        transform: translateY(2px);
+    }
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+</style>
