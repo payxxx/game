@@ -28,6 +28,7 @@
             width: 200px;
             border-radius: 10px;
             border: 1px solid #ccc;
+            text-align: center;
         }
         .role-list button, .start-button {
             margin: 5px;
@@ -117,6 +118,8 @@
         .role-container input {
             margin-right: 10px;
             flex-grow: 1;
+            width: 200px;
+            text-align: center;
         }
         #addRoleButton {
             margin: 5px;
@@ -155,9 +158,15 @@
             let roles = JSON.parse(localStorage.getItem(rolesKey));
             if (!roles) {
                 roles = [
-                    { name: "Role 1", team: "city" },
-                    { name: "Role 2", team: "city" },
-                    { name: "Role 3", team: "mafia" }
+                    { name: "زره ساز-پزشک", team: "city" },
+                    { name: "کارآگاه", team: "city" },
+                    { name: "عطار", team: "city" },
+                    { name: "مظنون", team: "city" },
+                    { name: "شهروند", team: "city" },
+                    { name: "شهروند", team: "city" },
+                    { name: "رییس مافیا", team: "mafia" },
+                    { name: "جادوگر", team: "mafia" },
+                    { name: "جلاد", team: "mafia" }
                 ];
                 localStorage.setItem(rolesKey, JSON.stringify(roles));
             }
@@ -168,32 +177,7 @@
             const roleList = document.getElementById('roleList');
             roleList.innerHTML = '';
             roles.forEach((role, index) => {
-                const roleContainer = document.createElement('div');
-                roleContainer.className = 'role-container';
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = role.name;
-                input.placeholder = `Role ${index + 1}`;
-                const teamButton = document.createElement('button');
-                teamButton.innerText = role.team === 'city' ? 'City' : 'Mafia';
-                teamButton.style.backgroundColor = role.team === 'city' ? 'green' : 'red';
-                teamButton.onclick = function() {
-                    if (teamButton.innerText === 'City') {
-                        teamButton.innerText = 'Mafia';
-                        teamButton.style.backgroundColor = 'red';
-                    } else {
-                        teamButton.innerText = 'City';
-                        teamButton.style.backgroundColor = 'green';
-                    }
-                };
-                const removeButton = document.createElement('button');
-                removeButton.innerText = 'Remove';
-                removeButton.onclick = function() {
-                    roleContainer.remove();
-                };
-                roleContainer.appendChild(input);
-                roleContainer.appendChild(teamButton);
-                roleContainer.appendChild(removeButton);
+                const roleContainer = createRoleContainer(role.name, role.team, index + 1);
                 roleList.appendChild(roleContainer);
             });
         }
@@ -204,7 +188,7 @@
             for (let i = 0; i < roleList.children.length; i++) {
                 const roleContainer = roleList.children[i];
                 const name = roleContainer.querySelector('input').value;
-                const team = roleContainer.querySelector('button').innerText.toLowerCase();
+                const team = roleContainer.querySelector('.team-button').innerText.toLowerCase();
                 roles.push({ name, team });
             }
             localStorage.setItem(rolesKey, JSON.stringify(roles));
@@ -212,14 +196,21 @@
 
         function addRole() {
             const roleList = document.getElementById('roleList');
+            const roleContainer = createRoleContainer('', 'city', roleList.children.length + 1);
+            roleList.appendChild(roleContainer);
+        }
+
+        function createRoleContainer(name, team, index) {
             const roleContainer = document.createElement('div');
             roleContainer.className = 'role-container';
-            const newRole = document.createElement('input');
-            newRole.type = 'text';
-            newRole.placeholder = `Role ${roleList.children.length + 1}`;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = name;
+            input.placeholder = `Role ${index}`;
             const teamButton = document.createElement('button');
-            teamButton.innerText = 'City';
-            teamButton.style.backgroundColor = 'green';
+            teamButton.className = 'team-button';
+            teamButton.innerText = team === 'city' ? 'City' : 'Mafia';
+            teamButton.style.backgroundColor = team === 'city' ? 'green' : 'red';
             teamButton.onclick = function() {
                 if (teamButton.innerText === 'City') {
                     teamButton.innerText = 'Mafia';
@@ -234,10 +225,10 @@
             removeButton.onclick = function() {
                 roleContainer.remove();
             };
-            roleContainer.appendChild(newRole);
+            roleContainer.appendChild(input);
             roleContainer.appendChild(teamButton);
             roleContainer.appendChild(removeButton);
-            roleList.appendChild(roleContainer);
+            return roleContainer;
         }
 
         function startGame() {
@@ -246,7 +237,7 @@
             for (let i = 0; i < roleList.children.length; i++) {
                 const roleContainer = roleList.children[i];
                 const name = roleContainer.querySelector('input').value;
-                const team = roleContainer.querySelector('button').innerText.toLowerCase();
+                const team = roleContainer.querySelector('.team-button').innerText.toLowerCase();
                 if (name) roles.push({ name, team });
             }
             if (roles.length < 1) {
@@ -338,6 +329,7 @@
         width: 200px;
         border-radius: 10px;
         border: 1px solid #ccc;
+        text-align: center;
     }
     .role-list button, .start-button {
         margin: 5px;
@@ -427,6 +419,8 @@
     .role-container input {
         margin-right: 10px;
         flex-grow: 1;
+        width: 200px;
+        text-align: center;
     }
     #addRoleButton {
         margin: 5px;
