@@ -1,6 +1,6 @@
 # Mafia / Werewolf Game Roles Assignment
 
-Welcome to the ** Mafia / Werewolf Game Roles Assignment Assistance**, a simple yet fun web-based tool designed for group activities or games where players need randomized roles! Perfect for party games, team-building exercises, or any scenario requiring quick, fair role distribution. Built with HTML, CSS, and JavaScript, this app runs entirely in your browser—locally or hosted on GitHub Pages—and is optimized for mobile use.
+Welcome to the ** Mafia / Werewolf Game Roles Assignment Assistant**, a simple yet fun web-based tool designed for group activities or games where players need randomized roles! Perfect for party games, team-building exercises, or any scenario requiring quick, fair role distribution. Built with HTML, CSS, and JavaScript, this app runs entirely in your browser—locally or hosted on GitHub Pages—and is optimized for mobile use.
 
 ## Purpose
 
