@@ -143,6 +143,7 @@
     <div class="circle-container" id="circleContainer"></div>
     <div class="popup" id="popup">
         <p id="popupText"></p>
+        <p id="popupTeam"></p>
         <button onclick="closePopup()">Close</button>
     </div>
     <div class="overlay" id="overlay"></div>
@@ -153,7 +154,11 @@
         function loadRoles() {
             let roles = JSON.parse(localStorage.getItem(rolesKey));
             if (!roles) {
-                roles = ["Role 1", "Role 2", "Role 3"];
+                roles = [
+                    { name: "Role 1", team: "city" },
+                    { name: "Role 2", team: "city" },
+                    { name: "Role 3", team: "mafia" }
+                ];
                 localStorage.setItem(rolesKey, JSON.stringify(roles));
             }
             populateRoleList(roles);
@@ -167,20 +172,41 @@
                 roleContainer.className = 'role-container';
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.value = role;
+                input.value = role.name;
                 input.placeholder = `Role ${index + 1}`;
+                const teamButton = document.createElement('button');
+                teamButton.innerText = role.team === 'city' ? 'City' : 'Mafia';
+                teamButton.style.backgroundColor = role.team === 'city' ? 'green' : 'red';
+                teamButton.onclick = function() {
+                    if (teamButton.innerText === 'City') {
+                        teamButton.innerText = 'Mafia';
+                        teamButton.style.backgroundColor = 'red';
+                    } else {
+                        teamButton.innerText = 'City';
+                        teamButton.style.backgroundColor = 'green';
+                    }
+                };
                 const removeButton = document.createElement('button');
                 removeButton.innerText = 'Remove';
                 removeButton.onclick = function() {
                     roleContainer.remove();
                 };
                 roleContainer.appendChild(input);
+                roleContainer.appendChild(teamButton);
                 roleContainer.appendChild(removeButton);
                 roleList.appendChild(roleContainer);
             });
         }
 
-        function saveRoles(roles) {
+        function saveRoles() {
+            const roles = [];
+            const roleList = document.getElementById('roleList');
+            for (let i = 0; i < roleList.children.length; i++) {
+                const roleContainer = roleList.children[i];
+                const name = roleContainer.querySelector('input').value;
+                const team = roleContainer.querySelector('button').innerText.toLowerCase();
+                roles.push({ name, team });
+            }
             localStorage.setItem(rolesKey, JSON.stringify(roles));
         }
 
@@ -191,12 +217,25 @@
             const newRole = document.createElement('input');
             newRole.type = 'text';
             newRole.placeholder = `Role ${roleList.children.length + 1}`;
+            const teamButton = document.createElement('button');
+            teamButton.innerText = 'City';
+            teamButton.style.backgroundColor = 'green';
+            teamButton.onclick = function() {
+                if (teamButton.innerText === 'City') {
+                    teamButton.innerText = 'Mafia';
+                    teamButton.style.backgroundColor = 'red';
+                } else {
+                    teamButton.innerText = 'City';
+                    teamButton.style.backgroundColor = 'green';
+                }
+            };
             const removeButton = document.createElement('button');
             removeButton.innerText = 'Remove';
             removeButton.onclick = function() {
                 roleContainer.remove();
             };
             roleContainer.appendChild(newRole);
+            roleContainer.appendChild(teamButton);
             roleContainer.appendChild(removeButton);
             roleList.appendChild(roleContainer);
         }
@@ -205,14 +244,16 @@
             const roles = [];
             const roleList = document.getElementById('roleList');
             for (let i = 0; i < roleList.children.length; i++) {
-                const role = roleList.children[i].querySelector('input').value;
-                if (role) roles.push(role);
+                const roleContainer = roleList.children[i];
+                const name = roleContainer.querySelector('input').value;
+                const team = roleContainer.querySelector('button').innerText.toLowerCase();
+                if (name) roles.push({ name, team });
             }
             if (roles.length < 1) {
                 alert('Please fill in at least one role.');
                 return;
             }
-            saveRoles(roles);
+            saveRoles();
             roleList.style.display = 'none'; // Hide the role input section
             document.querySelector('.start-button').style.display = 'none'; // Hide the Start button
             document.getElementById('addRoleButton').style.display = 'none'; // Hide the Add Role button
@@ -223,7 +264,8 @@
                 const circle = document.createElement('div');
                 circle.className = 'circle';
                 circle.innerText = '?';
-                circle.dataset.role = shuffledRoles[i];
+                circle.dataset.role = shuffledRoles[i].name;
+                circle.dataset.team = shuffledRoles[i].team;
                 circle.dataset.flipped = 'false';
                 circle.onclick = function() {
                     if (circle.dataset.flipped === 'false') {
@@ -232,18 +274,20 @@
                         circle.style.cursor = 'default';
                         circle.dataset.flipped = 'true';
                         circle.onclick = null;
-                        setTimeout(() => showPopup(circle.dataset.role, circle), 100);
+                        setTimeout(() => showPopup(circle.dataset.role, circle.dataset.team, circle), 100);
                     }
                 };
                 circleContainer.appendChild(circle);
             }
         }
 
-        function showPopup(role, circle) {
+        function showPopup(role, team, circle) {
             const popup = document.getElementById('popup');
             const overlay = document.getElementById('overlay');
             const popupText = document.getElementById('popupText');
-            popupText.innerText = role;
+            const popupTeam = document.getElementById('popupTeam');
+            popupText.innerText = `Role: ${role}`;
+            popupTeam.innerText = `Team: ${team.charAt(0).toUpperCase() + team.slice(1)}`;
             popup.style.display = 'block';
             overlay.style.display = 'block';
             overlay.onclick = function() {
