@@ -10,25 +10,31 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
         .role-list {
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%; /* Ensure the role list takes full width */
+            max-width: 400px; /* Limit the maximum width */
+            padding: 0 10px; /* Add padding to prevent cropping */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .role-list input {
             display: block;
             margin: 5px 0;
             padding: 10px;
-            width: 200px;
+            width: 100%; /* Ensure input boxes take full width */
             border-radius: 10px;
             border: 1px solid #ccc;
             text-align: center;
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .role-list button, .start-button {
             margin: 5px;
@@ -41,6 +47,9 @@
             color: white;
             box-shadow: 0 4px #0056b3;
             transition: all 0.2s ease;
+            width: 100%; /* Ensure buttons take full width */
+            max-width: 400px; /* Limit the maximum width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .role-list button:active, .start-button:active {
             box-shadow: 0 2px #0056b3;
@@ -52,6 +61,10 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
+            width: 100%; /* Ensure the circle container takes full width */
+            max-width: 400px; /* Limit the maximum width */
+            padding: 0 10px; /* Add padding to prevent cropping */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .circle {
             width: 60px;
@@ -84,6 +97,9 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             border-radius: 10px;
+            width: 90%; /* Ensure the popup takes most of the screen width */
+            max-width: 400px; /* Limit the maximum width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .popup button {
             margin-top: 10px;
@@ -95,6 +111,8 @@
             color: white;
             box-shadow: 0 4px #0056b3;
             transition: all 0.2s ease;
+            width: 100%; /* Ensure buttons take full width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .popup button:active {
             box-shadow: 0 2px #0056b3;
@@ -114,12 +132,15 @@
             display: flex;
             align-items: center;
             margin-bottom: 5px;
+            width: 100%; /* Ensure role containers take full width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .role-container input {
             margin-right: 10px;
             flex-grow: 1;
-            width: 200px;
+            width: 100%; /* Ensure input boxes take full width */
             text-align: center;
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         .team-button {
             width: 72px; /* 20% longer than the original 60px */
@@ -135,6 +156,9 @@
             color: white;
             box-shadow: 0 4px #0056b3;
             transition: all 0.2s ease;
+            width: 100%; /* Ensure the button takes full width */
+            max-width: 400px; /* Limit the maximum width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         #addRoleButton:active {
             box-shadow: 0 2px #0056b3;
@@ -151,6 +175,9 @@
             color: white;
             box-shadow: 0 4px #0056b3;
             transition: all 0.2s ease;
+            width: 100%; /* Ensure the button takes full width */
+            max-width: 400px; /* Limit the maximum width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         #resetButton:active {
             box-shadow: 0 2px #0056b3;
@@ -168,6 +195,9 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             border-radius: 10px;
+            width: 90%; /* Ensure the popup takes most of the screen width */
+            max-width: 400px; /* Limit the maximum width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         #resetPopup button {
             margin: 5px;
@@ -179,10 +209,21 @@
             color: white;
             box-shadow: 0 4px #0056b3;
             transition: all 0.2s ease;
+            width: 100%; /* Ensure buttons take full width */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
         #resetPopup button:active {
             box-shadow: 0 2px #0056b3;
             transform: translateY(2px);
+        }
+        #roleSummary {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            width: 100%; /* Ensure the summary takes full width */
+            max-width: 400px; /* Limit the maximum width */
+            text-align: center; /* Center-align the text */
+            box-sizing: border-box; /* Include padding in the element's total width and height */
         }
     </style>
 </head>
@@ -203,7 +244,7 @@
         <button onclick="closeResetPopup()">No</button>
     </div>
     <div class="overlay" id="overlay"></div>
-    <div id="roleSummary" style="display: none; margin-top: 20px; font-size: 18px;"></div>
+    <div id="roleSummary"></div>
 
     <script>
         const rolesKey = 'roles';
@@ -392,184 +433,3 @@
     </script>
 </body>
 </html>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-        background-color: #f0f0f0;
-    }
-    .role-list {
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .role-list input {
-        display: block;
-        margin: 5px 0;
-        padding: 10px;
-        width: 200px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        text-align: center;
-    }
-    .role-list button, .start-button {
-        margin: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    .role-list button:active, .start-button:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-    .circle-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
-    }
-    .circle {
-        width: 60px;
-        height: 60px;
-        margin: 10px;
-        border-radius: 50%;
-        background-color: #007bff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 14px;
-        cursor: pointer;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    .circle:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: white;
-        border: 1px solid #ccc;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        border-radius: 10px;
-    }
-    .popup button {
-        margin-top: 10px;
-        padding: 10px 20px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    .popup button:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    }
-    .role-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-    .role-container input {
-        margin-right: 10px;
-        flex-grow: 1;
-        width: 200px;
-        text-align: center;
-    }
-    .team-button {
-        width: 72px; /* 20% longer than the original 60px */
-    }
-    #addRoleButton {
-        margin: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    #addRoleButton:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-    #resetButton {
-        margin: 20px 5px 5px 5px; /* Add space above the reset button */
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    #resetButton:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-    #resetPopup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: white;
-        border: 1px solid #ccc;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        border-radius: 10px;
-    }
-    #resetPopup button {
-        margin: 5px;
-        padding: 10px 20px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 4px #0056b3;
-        transition: all 0.2s ease;
-    }
-    #resetPopup button:active {
-        box-shadow: 0 2px #0056b3;
-        transform: translateY(2px);
-    }
-</style>
